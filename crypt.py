@@ -1,10 +1,10 @@
 #! /usr/bin/python
 # -*- coding: UTF-8 -*-
 
-# @author: 	Visgean Skeloru 
-# email: 	<visgean@gmail.com>
-# jabber: 	<visgean@jabber.org>
-# github: 	http://github.com/Visgean
+# @author: Visgean Skeloru
+# email: <visgean@gmail.com>
+# jabber: <visgean@jabber.org>
+# github: http://github.com/Visgean
 
 from hashlib import sha512, md5
 from Crypto.Cipher import AES
@@ -13,26 +13,43 @@ import sys
 import getpass
 import base64
 import exceptions
-
+import os
+import tarfile
 
 "Module for crypting files"
 
 
-class WrongPassException(exceptions.BaseException):        
+class WrongPassException(exceptions.BaseException):
     def __str__(self):
         return "You have used wrong pass. This incident will be reported ( http://xkcd.com/838/ )"
 
 
 class FileContainer:
     def __init__(self, filepath, password):
-        self.filepath = filepath
-        self.newFile = filepath + ".aes" # filename for encryption
-        self.oldFile = filepath[:-4]     # filename for decryption 
+        self.tar = True if os.path.isdir(filepath) else False
+        if self.tar:
+            tarpath = filepath[:-1] if filepath[-1] is "/" else filepath
+            tarpath += ".tar"
+            
+            self.tarFolder(filepath, tarpath)
+            self.filepath = tarpath
+            self.newFile = self.filepath + ".taes" # filename for encryption
+        else:
+            self.filepath = filepath
+            self.newFile = self.filepath + ".aes" # filename for encryption
+
+        if self.filepath[-4:] == ".aes":
+            self.fileIsTar = False # encrypted file is just a file
+        if self.filepath[-5:] == ".taes":
+            self.fileIsTar = True # encrypted file is a folder
+        
+        self.oldFile = self.filepath[:-4] # filename for decryption
+        
         
         self.hashlist = self._pass2hashList(password)
         del password # there is no need to store it anymore cause we have hashes
-                
-        
+    
+    
     def _pass2hashList(self, rawPass):
         "Return list of hashes from password. "
         hashlist = []
@@ -52,7 +69,7 @@ class FileContainer:
         
     def _decryptdata(self, data):
         "decrypt data using AES algorithm"
-        hashReverse = list(self.hashlist)   # we need to create new list to be reversed
+        hashReverse = list(self.hashlist) # we need to create new list to be reversed
                                             # this list must not be same object as original list
         hashReverse.reverse() # finally we reverse list
         
@@ -72,8 +89,10 @@ class FileContainer:
         
         with open(self.newFile, "wb") as fileObj:
             fileObj.write(crypted)
+            
+        if self.tar:
+            os.remove(self.filepath)
         
-    
     def decryptFile(self):
         with open(self.filepath, "rb") as fileObj:
             data = fileObj.read()
@@ -82,7 +101,18 @@ class FileContainer:
         
         with open(self.oldFile, "wb") as fileObj:
             fileObj.write(decrypted)
+            
+        if self.fileIsTar:
+            self.untar(self.oldFile)
+            os.remove(self.oldFile)
+            
+    def tarFolder(self, folder, tarpath):
+        "tar folder"
+        tarball = tarfile.open(tarpath, "w")
+        tarball.add(folder)
+        tarball.close()
     
-
-
-    
+    def untar(self, filename):
+        tarball = tarfile.open(filename)
+        tarball.extractall()
+        tarball.close()
