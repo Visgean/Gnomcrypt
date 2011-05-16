@@ -32,3 +32,8 @@ How to use it?
 	When you click on a file, there should be icon with Gnomcrypt label, click it
 	dialog should appear and than Gnomcrypt will encrypt/decrypt file. 
 	(it´s automatically decrypting when file ends with ".aes" or ".taes")
+
+
+TODO: 
+=====
+   1) review of the crypt library
