@@ -33,7 +33,10 @@ How to use it?
 	dialog should appear and than Gnomcrypt will encrypt/decrypt file. 
 	(it´s automatically decrypting when file ends with ".aes" or ".taes")
 
+License:
+========
+	Licensed under http://creativecommons.org/licenses/by/3.0/
 
 TODO: 
 =====
-   1) review of the crypt library
+1) review of the crypt library

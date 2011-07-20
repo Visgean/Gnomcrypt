@@ -38,9 +38,9 @@ class FileContainer:
             self.filepath = filepath
             self.newFile = self.filepath + ".aes" # filename for encryption
 
-        if self.filepath[-4:] == ".aes":
+        if self.filepath.endswith(".aes"):
             self.fileIsTar = False # encrypted file is just a file
-        if self.filepath[-5:] == ".taes":
+        if self.filepath.endswith(".taes"):
             self.fileIsTar = True # encrypted file is a folder
         
         self.oldFile = self.filepath[:-4] # filename for decryption
