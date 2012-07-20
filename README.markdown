@@ -15,7 +15,7 @@ What the shell is this?
 	So I have implemented that by my own. That crypt.py lib may be little 
 	random so if you have any ideas how to make it better feel free to say it.
 	
-What do I need to use it?
+What libs does it depends on?
 =========================
 	- Zenity Framework
 	- Nautilus-actions manager
